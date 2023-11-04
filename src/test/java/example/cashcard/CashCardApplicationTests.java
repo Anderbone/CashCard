@@ -1,5 +1,6 @@
 package example.cashcard;
 
+import java.net.URI;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,6 +24,17 @@ class CashCardApplicationTests {
 		assertThat(response2.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
 		//assertThat(response.getStatusCodeValue()).isEqualTo(HttpStatus.OK);
 		//assertThat(response.getBody()).isEqualTo("99");
+	}
+	
+	@Test
+	void shouldCreateANewCashCard(){
+		CashCard newCashCard = new CashCard(null, 250.00);
+		ResponseEntity<Void> createResponse = restTemplate.postForEntity("/cashcards", newCashCard, Void.class);
+		assertThat(createResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+		
+		URI locationOfNewCashCard = createResponse.getHeaders().getLocation();
+		ResponseEntity<String> getResponse = restTemplate.getForEntity(locationOfNewCashCard, String.class);
+		assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
 	}
 	
 	@Test
